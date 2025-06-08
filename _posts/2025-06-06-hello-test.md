@@ -1,6 +1,7 @@
 ---
+layout: post
 title: Title
-date: 2025-06-08 12:00:00 -500
+date: 2025-06-06 12:00:00 +0300
 categories: [Automation,python]
 tags: [python, backup] # TAG names
 ---
