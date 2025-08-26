@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Title
+title: Introduction
 date: 2025-06-06 12:00:00 +0300
-categories: [Automation,python]
-tags: [python, backup] # TAG names
+categories: [introduction]
+tags: [introduction] # TAG names
 ---
 
 
@@ -22,7 +22,7 @@ This site serves as my personal knowledge base and blog. Here you'll find:
 
 ## 🚀 Featured Projects
 
-examples will be added here
+Projects will be added here in the future.
 
 ---
 
