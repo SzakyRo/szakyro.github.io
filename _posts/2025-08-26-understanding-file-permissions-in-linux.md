@@ -2,7 +2,7 @@
 layout: post
 title: "Understanding File Permissions in Linux"
 date: 2025-08-26
-categories: [linux,permissions]
+categories: [Linux,Tutorial]
 tags: [linux, permissions, security, tutorial]
 ---
 

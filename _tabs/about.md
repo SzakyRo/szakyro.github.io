@@ -7,14 +7,14 @@ order: 4
 
 # About Me
 ![My profile photo](/assets/img/me.jpg)
-I'm a **driven IT professional** with around **5 years of experience** in system administration, technical support, and cybersecurity. Currently, I serve as an **Infrastructure Engineer at Bitdefender**, where I manage both Windows and Linux systems, leveraging expertise in **VMware virtualization** and a wide range of security technologies.
+I'm a **driven IT professional** with around **5 years of experience** in system administration, technical support, and cybersecurity. Currently, I serve as an **Infrastructure Engineer at Bitdefender**, where I manage both Windows and Linux systems, leveraging expertise in **Proxmox virtualization** and a wide range of security technologies.
 
 ---
 
 ## 🛠️ Technical Focus
 
 - System administration (Windows & Linux)
-- VMware & virtualization technologies
+- Proxmox & virtualization technologies
 - Infrastructure maintenance & automation
 - Remote troubleshooting & incident response
 - Security operations & system hardening

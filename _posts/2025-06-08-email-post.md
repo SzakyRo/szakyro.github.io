@@ -2,7 +2,7 @@
 layout: post
 title: How to set up your email server using Postfix
 date: 2025-06-08 16:00:00 +0300
-categories: [Email,postfix]
+categories: [Email,Postfix]
 tags: [email, postfix] # TAG names
 ---
 

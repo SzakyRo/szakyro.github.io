@@ -2,7 +2,7 @@
 layout: post
 title: "10 Essential Linux Commands Every Beginner Should Know"
 date: 2025-08-26
-categories: [linux,tutorial]
+categories: [Linux,Tutorial]
 tags: [linux, commands, beginners, tutorial]
 ---
 

@@ -2,7 +2,7 @@
 layout: post
 title: Introduction
 date: 2025-06-06 12:00:00 +0300
-categories: [introduction]
+categories: [Introduction]
 tags: [introduction] # TAG names
 ---
 

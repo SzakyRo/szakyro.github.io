@@ -2,7 +2,7 @@
 layout: post
 title: How to set up Outline using Docker
 date: 2025-06-08 18:00:00 +0300
-categories: [Docker,outline]
+categories: [Docker,Outline]
 tags: [docker, outline] # TAG names
 ---
 

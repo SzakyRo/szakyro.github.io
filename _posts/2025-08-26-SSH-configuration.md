@@ -2,7 +2,7 @@
 layout: post
 title: "How to Create an SSH Key and Configure OpenSSH Server for Key Authentication"
 date: 2025-08-26
-categories: [ssh,openssh,security,tutorial]
+categories: [Linux,Tutorial,Ssh]
 tags: [linux, security, tutorial]
 ---
 
