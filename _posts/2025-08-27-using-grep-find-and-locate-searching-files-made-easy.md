@@ -2,7 +2,7 @@
 layout: post
 title: "Mastering grep, find, and locate: Searching Files Made Easy"
 date: 2025-08-27
-categories: [Linux, Searching]
+categories: [Linux, Tutorial, Searching]
 tags: [grep, find, locate, linux, file-search, tutorial]
 ---
 
