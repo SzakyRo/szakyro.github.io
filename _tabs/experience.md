@@ -1,7 +1,7 @@
 ---
 # the default layout is 'page'
 icon: fas fa-cogs
-order: 5
+order: 2
 ---
 
 
