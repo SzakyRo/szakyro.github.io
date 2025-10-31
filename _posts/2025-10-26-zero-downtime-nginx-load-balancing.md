@@ -5,7 +5,6 @@ date: 2025-10-26
 categories: [linux, nginx, devops, sysadmin]
 tags: [nginx, load-balancing, zero-downtime, linux, tutorial]
 description: "Learn how to configure Nginx as a load balancer for multiple web servers with zero downtime updates using health checks and rolling restarts."
-author: Your Name
 ---
 
 # Zero-Downtime Nginx Load Balancing Between Web Servers
