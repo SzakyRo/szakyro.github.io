@@ -1,28 +1,3 @@
-# GitHub Pages deployment
-# -----------------------
-# On every push to `main` (and on manual runs via workflow_dispatch),
-# this workflow:
-#   1. Installs dependencies with the lockfile-pinned npm cache
-#   2. Lints (oxlint) and typechecks (`tsc -b` covers both referenced
-#      tsconfigs: `tsconfig.app.json` and `tsconfig.node.json`)
-#   3. Builds `dist/` (Vite; `tsc -b` is part of `npm run build`)
-#   4. Uploads `dist/` as a Pages artifact
-#   5. Deploys the artifact to GitHub Pages
-#
-# The workflow runs in two jobs so deployment can be gated to `main`
-# only — without that split, forks or feature branches would publish.
-# The build job runs on every push; the deploy job runs only when
-# `github.ref == 'refs/heads/main'`, which covers both the push
-# trigger (always main, by the `branches:` filter) and any manual
-# dispatch invoked from main.
-#
-# Concurrency cancels a superseded run when a new push arrives, so
-# two deploys can't race.
-#
-# `pages: write` and `id-token: write` are both required by
-# `actions/deploy-pages@v4` (OIDC token exchange). The default
-# `GITHUB_TOKEN` has neither, so they must be granted explicitly.
-
 name: Pages
 
 on:
@@ -50,6 +25,10 @@ jobs:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: package-lock.json
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure npm registry
+        run: npm config set registry https://registry.npmjs.org
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
