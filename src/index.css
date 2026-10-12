@@ -1,0 +1,310 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg text-fg;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: theme('colors.accent');
+    color: theme('colors.bg');
+  }
+  a {
+    color: theme('colors.link');
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  *:focus-visible {
+    outline: 2px solid theme('colors.accent');
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer utilities {
+  .text-mono {
+    font-family: theme('fontFamily.mono');
+    font-variant-ligatures: none;
+  }
+
+  /* Scroll-reveal: entrance fade+lift, gated to elements the Reveal
+     component has observed. Power-out feel: 350ms total. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 350ms ease-out,
+      transform 350ms ease-out;
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  .reveal.is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Hero boot sequence: lines come up staggered on load like a shell
+     initialising. Slightly longer than scroll-reveal since it's the
+     page's first impression. */
+  .boot {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: boot-up 400ms ease-out forwards;
+    animation-delay: var(--boot-delay, 0ms);
+  }
+
+  /* Traditional block-caret blink. steps() timing, no soft fade — the
+     classic terminal cursor. */
+  .caret {
+    animation: caret-blink 1.06s step-end infinite;
+  }
+
+  /* Ambient background: faint grid drifting very slowly. Barely
+     visible — the intent is to hint at depth behind the content. */
+  .grid-drift::before {
+    content: '';
+    position: fixed;
+    inset: -120px;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(214, 222, 229, 0.05) 1px, transparent 1px);
+    background-size: 36px 36px;
+    animation: grid-drift 60s linear infinite;
+    z-index: -1;
+  }
+
+  /* Timeline dots: pop in with their parent entry via .reveal. */
+  .dot-pop {
+    transform: scale(0);
+    transform-origin: center;
+    transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1)
+      calc(var(--reveal-delay, 0ms) + 120ms);
+  }
+  .is-revealed .dot-pop {
+    transform: scale(1);
+  }
+
+  /* Skill pill hover: faint accent border + tiny lift, transform-only. */
+  .pill {
+    transition:
+      border-color 150ms ease-out,
+      transform 150ms ease-out,
+      background-color 150ms ease-out;
+  }
+  .pill:hover {
+    border-color: theme('colors.accent / 0.5');
+    background-color: theme('colors.accent / 0.06');
+    transform: translateY(-1px);
+  }
+
+  /* Sweep underline for the big contact links. */
+  .link-sweep {
+    position: relative;
+  }
+  .link-sweep::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 1px;
+    background: theme('colors.accent');
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 180ms ease-out;
+  }
+  .link-sweep:hover::after {
+    transform: scaleX(1);
+  }
+  .link-sweep:hover {
+    text-decoration: none;
+  }
+}
+
+@keyframes boot-up {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes grid-drift {
+  to {
+    transform: translateY(36px);
+  }
+}
+
+  /* CSS rabbit: a single div with two pseudo-elements. Ears/head via
+     border-radius, tail/eye/feet via box-shadows. All animation runs
+     on transform + box-shadow so it stays on the compositor. */
+  .rabbit {
+    width: 5em;
+    height: 3em;
+    background: #7FD962;
+    border-radius: 70% 90% 60% 50%;
+    position: relative;
+    box-shadow: -0.2em 1em 0 -0.75em #16301b;
+    transform: rotate(0deg) translate(-2em, 0);
+    animation: rabbit-hop 1s infinite linear;
+    z-index: 1;
+    font-size: 16px;
+  }
+  .rabbit::before {
+    content: '';
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    background: #7FD962;
+    border-radius: 100%;
+    top: 0.5em;
+    left: -0.3em;
+    box-shadow:
+      4em 0.4em 0 -0.35em #0B0F12,
+      0.5em 1em 0 #7FD962,
+      4em 1em 0 -0.3em #7FD962,
+      4em 1em 0 -0.3em #7FD962,
+      4em 1em 0 -0.4em #7FD962;
+    animation: rabbit-kick 1s infinite linear;
+  }
+  .rabbit::after {
+    content: '';
+    position: absolute;
+    width: 0.75em;
+    height: 2em;
+    background: #7FD962;
+    border-radius: 50% 100% 0 0;
+    transform: rotate(-30deg);
+    right: 1em;
+    top: -1em;
+    border-top: 1px solid #a5e883;
+    border-left: 1px solid #a5e883;
+    box-shadow: -0.5em 0 0 -0.1em #7FD962;
+  }
+
+  .rabbit-clouds {
+    background: #d6dee5;
+    width: 2em;
+    height: 2em;
+    border-radius: 100% 100% 0 0;
+    position: relative;
+    top: -4em;
+    opacity: 0;
+    transform: translate(0, 0);
+    animation: rabbit-cloudy 1s infinite linear forwards;
+    box-shadow: 5em 2em 0 -0.3em #d6dee5, -2em 2em 0 0 #d6dee5;
+  }
+  .rabbit-clouds::before,
+  .rabbit-clouds::after {
+    content: '';
+    position: absolute;
+    box-shadow: 5em 2em 0 -0.3em #d6dee5, -2em 2em 0 #d6dee5;
+  }
+  .rabbit-clouds::before {
+    width: 1.25em;
+    height: 1.25em;
+    border-radius: 100% 100% 0 100%;
+    background: #d6dee5;
+    left: -30%;
+    bottom: 0;
+  }
+  .rabbit-clouds::after {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 100% 100% 100% 0;
+    background: #d6dee5;
+    right: -30%;
+    bottom: 0;
+  }
+
+@keyframes rabbit-hop {
+  20% {
+    transform: rotate(-10deg) translate(1em, -2em);
+    box-shadow: -0.2em 3em 0 -1em #16301b;
+  }
+  40% {
+    transform: rotate(10deg) translate(3em, -4em);
+    box-shadow: -0.2em 3.25em 0 -1.1em #16301b;
+  }
+  60%, 75% {
+    transform: rotate(0) translate(4em, 0);
+    box-shadow: -0.2em 1em 0 -0.75em #16301b;
+  }
+  100% {
+    transform: rotate(0) translate(-2em, 0);
+    box-shadow: -0.2em 1em 0 -0.75em #16301b;
+  }
+}
+
+@keyframes rabbit-kick {
+  20%, 50% {
+    box-shadow:
+      4em 0.4em 0 -0.35em #0B0F12,
+      0.5em 1.5em 0 #7FD962,
+      4em 1.75em 0 -0.3em #7FD962,
+      4em 1.75em 0 -0.3em #7FD962,
+      4em 1.9em 0 -0.4em #7FD962;
+  }
+  40% {
+    box-shadow:
+      4em 0.4em 0 -0.35em #0B0F12,
+      0.5em 2em 0 #7FD962,
+      4em 1.75em 0 -0.3em #7FD962,
+      4.2em 1.75em 0 -0.2em #7FD962,
+      4.4em 1.9em 0 -0.2em #7FD962;
+  }
+}
+
+@keyframes rabbit-cloudy {
+  40% {
+    opacity: 0.75;
+    transform: translate(-3em, 0);
+  }
+  55% {
+    opacity: 0;
+    transform: translate(-4em, 0);
+  }
+  90% {
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .boot {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
+  .caret,
+  .grid-drift::before,
+  .rabbit,
+  .rabbit::before,
+  .rabbit-clouds {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
