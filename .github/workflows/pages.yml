@@ -1,0 +1,81 @@
+# GitHub Pages deployment
+# -----------------------
+# On every push to `main` (and on manual runs via workflow_dispatch),
+# this workflow:
+#   1. Installs dependencies with the lockfile-pinned npm cache
+#   2. Lints (oxlint) and typechecks (`tsc -b` covers both referenced
+#      tsconfigs: `tsconfig.app.json` and `tsconfig.node.json`)
+#   3. Builds `dist/` (Vite; `tsc -b` is part of `npm run build`)
+#   4. Uploads `dist/` as a Pages artifact
+#   5. Deploys the artifact to GitHub Pages
+#
+# The workflow runs in two jobs so deployment can be gated to `main`
+# only — without that split, forks or feature branches would publish.
+# The build job runs on every push; the deploy job runs only when
+# `github.ref == 'refs/heads/main'`, which covers both the push
+# trigger (always main, by the `branches:` filter) and any manual
+# dispatch invoked from main.
+#
+# Concurrency cancels a superseded run when a new push arrives, so
+# two deploys can't race.
+#
+# `pages: write` and `id-token: write` are both required by
+# `actions/deploy-pages@v4` (OIDC token exchange). The default
+# `GITHUB_TOKEN` has neither, so they must be granted explicitly.
+
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (oxlint)
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc -b
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
