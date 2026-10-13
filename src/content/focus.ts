@@ -47,4 +47,10 @@ export const focusAreas: FocusArea[] = [
       'Public cloud alongside the on-premises estate: AWS workloads, GCP pieces, and the OpenNebula / OpenStack private cloud the team runs as the in-house compute substrate.',
     stack: ['AWS', 'Google Cloud', 'OpenNebula', 'OpenStack'],
   },
+  {
+    title: 'Telephony & PBX',
+    description:
+      'Self-hosted Asterisk for the team voice stack: dialplan, extensions, SIP trunks, voicemail, and the call-queue logic the rest of the team relies on.',
+    stack: ['Asterisk'],
+  },
 ]

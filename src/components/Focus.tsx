@@ -1,9 +1,9 @@
 import type { LucideIcon } from 'lucide-react'
-import { Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud } from 'lucide-react'
+import { Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud, Phone } from 'lucide-react'
 import { focusAreas } from '../content/focus'
 import { Reveal } from './Reveal'
 
-const icons: LucideIcon[] = [Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud]
+const icons: LucideIcon[] = [Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud, Phone]
 
 export function Focus() {
   return (

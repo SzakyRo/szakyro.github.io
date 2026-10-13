@@ -118,4 +118,8 @@ export const skillGroups: SkillGroup[] = [
     group: 'Containers',
     items: ['Docker', 'Kubernetes'],
   },
+  {
+    group: 'Telephony & PBX',
+    items: ['Asterisk'],
+  },
 ]
