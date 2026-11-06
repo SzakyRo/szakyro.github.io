@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
     <title>Not found — Liviu Gelca</title>
     <style>
       body {
@@ -16,6 +17,13 @@
       main {
         max-width: 42rem;
         margin: 0 auto;
+      }
+      /* The 404 line is the page's h1; reset it to render exactly like
+         the <p> it replaces so the visual output is unchanged. */
+      h1 {
+        font-size: inherit;
+        font-weight: inherit;
+        margin: 1em 0;
       }
       a {
         color: #82AAFF;
@@ -32,7 +40,7 @@
   <body>
     <main>
       <p><span class="prompt">$</span> cd / && ls -la</p>
-      <p>404 — that path doesn't exist on this site.</p>
+      <h1>404 — that path doesn't exist on this site.</h1>
       <p>↳ <a href="/">back to the cv</a></p>
     </main>
   </body>

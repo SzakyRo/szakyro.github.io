@@ -14,11 +14,11 @@ export function Focus() {
           <Reveal
             key={f.title}
             delay={Math.min(i, 8) * 60}
-            className="group relative border border-line bg-surface/40 rounded-sm p-5 transition-all duration-200 hover:border-accent/50 hover:bg-surface/70 hover:-translate-y-0.5"
+            className="group relative border border-line bg-surface/40 rounded-sm p-5 transition duration-200 hover:border-accent/50 hover:bg-surface/70 hover:-translate-y-0.5"
           >
             <div className="flex items-start justify-between gap-3 mb-3">
               <Icon size={18} className="text-muted group-hover:text-accent transition-colors duration-200" aria-hidden="true" />
-              <span className="text-mono text-[10px] text-muted select-none">
+              <span className="text-mono text-[10px] text-muted select-none" aria-hidden="true">
                 {String(i + 1).padStart(2, '0')}
               </span>
             </div>

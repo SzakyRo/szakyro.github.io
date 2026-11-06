@@ -89,7 +89,7 @@ export function Nav() {
                   ? 'text-bg bg-accent'
                   : 'text-fg/80 hover:text-accent',
               )}
-              aria-current={active === l.href ? 'true' : undefined}
+              aria-current={active === l.href ? 'location' : undefined}
             >
               {l.label}
             </a>

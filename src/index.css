@@ -6,6 +6,14 @@
   html {
     font-feature-settings: 'ss01', 'cv11';
     -webkit-text-size-adjust: 100%;
+    /* Anchored sections must clear the fixed Nav (~48px tall) or the
+       section's top divider and `§ NN` prompt get tucked under it on
+       an #id jump. Covers every anchor the Nav links to, at once. */
+    scroll-padding-top: 4rem;
+    /* Anchor navigation animates rather than teleporting. Neutralised
+       by the `scroll-behavior: auto` override in the reduced-motion
+       block at the bottom of this file. */
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-bg text-fg;
