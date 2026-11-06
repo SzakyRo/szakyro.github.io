@@ -19,17 +19,31 @@ npm run preview   # vite preview of the built bundle
 
 There is no separate `test` script and no test framework — there are no automated tests. For a one-off type check without producing `dist/`: `npx tsc -b --noEmit` (or just `tsc --noEmit` if the project references are already resolved).
 
+`oxlint` runs with its default rule set: there is **no** `.oxlintrc.json` in the repo. The type-aware config in `README.md` is an upstream template suggestion, not the current setup — don't assume lint rules you can't find in a config file. `README.md` itself is the unmodified Vite template README and describes nothing about this project.
+
 To verify a production bundle locally with SPA-style 404 fallback: `npm run build && npx serve dist -l 4173 --single`.
 
 ## Architecture
 
-### Content lives in `src/content/`, not in components
+### Content lives in `src/content/` — mostly
 
-Every visible string — name, role, experience entries, skill groups, focus areas, education, certifications, writing links — is exported from a typed module under `src/content/`. Components import those modules; they contain no copy of their own.
+CV data lives in typed modules under `src/content/`: `profile.ts`, `experience.ts`, `skills.ts`, `focus.ts`, `education.ts`. Schemas (`Experience`, `SkillGroup`, `FocusArea`, `Education`, `Certification`, `Language`) are exported from those same files, so `tsc -b` fails the build when a required field is missing.
 
-Schemas (`Experience`, `SkillGroup`, `FocusArea`, `Education`, `Certification`, `Language`, `profile`) live alongside the data and are exported from the same files. `src/content/experience.ts` also exports a `durationLabel(start, end)` helper that computes "N years and M months" between ISO `YYYY-MM` dates at render time — leave `duration` blank in source data and let `Experience.tsx` call this.
+`src/content/experience.ts` also exports `durationLabel(start, end)`, which renders "N years and M months" from ISO `YYYY-MM` dates at render time. Leave `duration` blank in source data — `Experience.tsx` calls the helper. It counts inclusively (the start month counts as a full month) and falls back to months-only below a year.
 
-To change copy or add a role, edit `src/content/*.ts` — never edit `src/components/*.tsx` to inline text. The build's `tsc -b` step enforces the schemas; a missing required field will fail the build.
+**The "edit content, not components" rule is a convention, not an invariant.** These strings live in components and have to be edited there:
+
+| File | Inline copy |
+| --- | --- |
+| `src/components/Writing.tsx` | the entire `posts` array and the archive link — the writing list is *not* in `src/content/` |
+| `src/components/Now.tsx` | the `focus` array of three bullets |
+| `src/components/Skills.tsx` | the trailing "Knowledge of different operating systems…" paragraph |
+| `src/App.tsx` | the intro paragraph inside the Focus `<Section>` |
+| `src/components/Hero.tsx` | link labels and the `Stat` values |
+| `src/components/Focus.tsx` | the `icons` array (matched by index modulo) |
+| `index.html` | `<title>`, meta description, OG/Twitter tags, JSON-LD — a parallel copy of `profile.ts` for crawlers |
+
+So a copy change means grepping the old string across `src/` *and* `index.html`, not editing a single module. `index.html` SEO strings have no schema behind them and will silently drift from `profile.ts`.
 
 ### The `Section` wrapper and the § command pattern
 
@@ -43,18 +57,22 @@ $ Experience
 
 `App.tsx` mounts seven sections (Now, Focus, Experience, Skills, Writing, Education, Contact) plus `Hero` and `Rabbit`. Each Section title links via `#id` from `Nav` — keep those IDs in sync if you add/rename sections.
 
+The `index` (`§ 01`…`§ 07`) and `prompt` props are hard-coded string literals in `App.tsx`, not derived from order, so inserting a section means renumbering every later one by hand. `Section` also accepts an optional `className`.
+
 ### `Reveal` is the universal scroll-reveal
 
 Any element that should fade in on scroll is wrapped in `<Reveal>` (`src/components/Reveal.tsx`). It uses `IntersectionObserver` + a fallback scroll listener (catches deep-link jumps that already scrolled past the element). Honors `prefers-reduced-motion` at the JS level — skips observation and reveals immediately.
 
-Reveal only animates `opacity` and `transform` (compositor-only). Per-element stagger is controlled via the `delay` prop, which sets `--reveal-delay`. CSS for the reveal lives in `src/index.css` under the `.reveal` / `.is-revealed` utility classes.
+Reveal only animates `opacity` and `transform` (compositor-only). Per-element stagger is controlled via the `delay` prop, which sets `--reveal-delay`; the house convention is `Math.min(i, 8) * 50`–`60` ms so long lists don't accumulate a visible lag. `--reveal-delay` also drives `.dot-pop`, so the Experience timeline dots pop off the parent Reveal's delay rather than their own.
+
+`Reveal` renders a `div` by default — pass `as="li"` when wrapping list items so list semantics survive (see `Experience`, `Writing`, `Now`). CSS for the reveal lives in `src/index.css` under the `.reveal` / `.is-revealed` utility classes.
 
 ### Other components worth knowing
 
 - `Nav` — fixed top bar that slides in once the hero scrolls out; tracks the active section by scroll position. Links are hard-coded at the top of the file.
 - `ScrollProgress` — 2px hairline at the very top, `scaleX`-driven. Hidden entirely under `prefers-reduced-motion`.
 - `Hero` — uses `useTypingLoop('whoami')` to animate a terminal-style prompt in the hero. `useTypingLoop` short-circuits under reduced-motion.
-- `Rabbit` — pure CSS animation at the bottom of the page. A single `<div class="rabbit">` driven by `box-shadow` and `transform` keyframes (see `src/index.css`). Hidden if `useReducedMotionFlag()` returns true.
+- `Rabbit` — pure CSS animation at the bottom of the page. A single `<div class="rabbit">` driven by `box-shadow` and `transform` keyframes (see `src/index.css`). The rabbit itself is always rendered; only the dust-cloud layer is gated on `useReducedMotionFlag()`. The rabbit's motion is stopped by the `prefers-reduced-motion` CSS block, not by the component.
 - `Focus` — pairs `src/content/focus.ts` with lucide-react icons. Icons are looked up by index modulo the array — keep the icon list length ≥ focus areas.
 
 ### Styling conventions
@@ -68,6 +86,8 @@ warn #FFB454 link #82AAFF
 ```
 
 Tokens are used as Tailwind classes throughout — `bg-bg`, `text-fg`, `border-line`, `text-accent`, etc. Add new tokens by extending `tailwind.config.js`'s `theme.extend.colors`; do not hardcode hex in components.
+
+One exception: the `.rabbit*` rules in `src/index.css` hardcode `#7FD962`, `#0B0F12`, and `#d6dee5` instead of reading theme tokens. Changing `accent` in `tailwind.config.js` will not repaint the rabbit — those hex values have to be updated by hand.
 
 Two utility classes wrap the JetBrains Mono font and the font-feature-settings: `text-mono` (in `index.css`) for elements that should be monospace; `font-sans` / `font-mono` Tailwind classes for the rest. Font files are imported at the top of `src/main.tsx` from `@fontsource-variable/inter` and `@fontsource-variable/jetbrains-mono`.
 
@@ -85,19 +105,27 @@ Accessibility: skip-to-content link in `index.html`, `aria-labelledby` on sectio
 
 `vite.config.ts`: `base: '/'` (the site is served at the domain root, not under a `/cv/` subpath — see the CNAME). `build.target: 'es2022'`. `rollupOptions.output.manualChunks` splits `react` and `lucide-react` into their own chunks so the entry chunk stays small. The dev server uses port 5173 but is not strict.
 
-The `public/` directory is copied to `dist/` as-is. `public/404.html` is a hand-written terminal-style 404 page served by GitHub Pages for unknown paths; `public/CNAME` configures the custom domain; `public/robots.txt` and `public/sitemap.xml` handle crawl directives.
+The `public/` directory is copied to `dist/` as-is. `public/404.html` is a hand-written terminal-style 404 page served by GitHub Pages for unknown paths; `public/CNAME` configures the custom domain; `public/robots.txt` and `public/sitemap.xml` handle crawl directives; `public/og-image.png` and the favicon set (`favicon.svg`, `favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-*.png`) are referenced from `index.html`. Note `sitemap.xml` and `robots.txt` hardcode the `liviugelca.it` origin — they are static files, not generated from config.
 
 ## Deployment
 
-The site is built and deployed to GitHub Pages. Every push to `main` triggers a workflow that runs `npm ci` → `npm run lint` → `tsc --noEmit` → `npm run build` → uploads `dist/` as a Pages artifact. Custom domain is `liviugelca.it` via `public/CNAME`.
+`.github/workflows/pages.yml` builds and deploys to GitHub Pages. On every push to `main` (and on manual `workflow_dispatch`), on Node 22, the `build` job runs:
+
+`npm ci --no-audit --no-fund` → `npm run lint` → `npx tsc -b` → `npm run build`, then uploads `dist/` via `actions/upload-pages-artifact`. A separate `deploy` job, gated on `github.ref == 'refs/heads/main'`, runs `actions/deploy-pages`. A `concurrency: pages` group with `cancel-in-progress: true` kills a running build when a newer push lands. On failure the job uploads `/home/runner/.npm/_logs/` as a `npm-debug-log` artifact.
+
+CI runs both `npm run lint` and `npx tsc -b` as separate steps *before* `npm run build`, even though `build` also runs `tsc -b` — so a type error fails at the typecheck step, not the build step.
+
+The npm registry is pinned to `registry.npmjs.org` in two places: `.npmrc` and an explicit `npm config set registry` step in the workflow (plus `registry-url` on `setup-node`). If a CI install fails with a resolution error, check those before touching the lockfile — recent commits fixed exactly this.
+
+Custom domain is `liviugelca.it` via `public/CNAME`.
 
 For local verification of the production bundle with SPA fallback: `npm run build && npx serve dist -l 4173 --single`.
 
 ## Conventions when editing
 
-- **Add or change copy** by editing `src/content/*.ts`; do not inline strings into components.
-- **Add a new section**: define the data in `src/content/`, add a component in `src/components/`, mount it in `App.tsx` inside a `<Section>` wrapper, and add the anchor to the `links` array at the top of `Nav.tsx`.
-- **Reveal-on-scroll**: wrap with `<Reveal>` and pass a `delay` (in ms) for staggering. The CSS class `reveal` is added by the component — don't apply it manually elsewhere.
+- **Add or change copy** by editing `src/content/*.ts` — but read the exceptions table above first; `Writing.tsx`, `Now.tsx`, `Skills.tsx`, `App.tsx`, and `index.html` all hold copy inline.
+- **Add a new section**: define the data in `src/content/`, add a component in `src/components/`, mount it in `App.tsx` inside a `<Section>` wrapper (renumbering the later `§ NN` literals), and add the anchor to the `links` array at the top of `Nav.tsx`. If the section needs to be discoverable, also update `index.html`'s SEO tags and `public/sitemap.xml`.
+- **Reveal-on-scroll**: wrap with `<Reveal>` and pass a `delay` (in ms) for staggering; use `as="li"` inside lists. The CSS class `reveal` is added by the component — don't apply it manually elsewhere.
 - **Animation**: add keyframes to `src/index.css` and an override under `@media (prefers-reduced-motion: reduce)`. Use only `transform` / `opacity` / `box-shadow` to stay on the compositor.
 - **Icons**: import from `lucide-react`. Pass `aria-hidden="true"` for decorative use.
 - **Tailwind colors**: use the themed tokens (`bg-bg`, `text-fg`, `border-line`, `text-accent`, etc.), not raw hex values.
