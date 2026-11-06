@@ -53,4 +53,10 @@ export const focusAreas: FocusArea[] = [
       'Self-hosted Asterisk for the team voice stack: dialplan, extensions, SIP trunks, voicemail, and the call-queue logic the rest of the team relies on.',
     stack: ['Asterisk'],
   },
+  {
+    title: 'LLM-assisted operations',
+    description:
+      'Claude Code and a hosted LLM as everyday tools across everything else on this list: drafting Puppet manifests and Python automation, turning incident notes into runbook updates, and a first pass on log triage before I verify it by hand. The model drafts; I own what ships.',
+    stack: ['Claude Code', 'hosted LLMs', 'Python', 'Puppet'],
+  },
 ]

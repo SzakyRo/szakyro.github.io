@@ -1,9 +1,10 @@
+import clsx from 'clsx'
 import type { LucideIcon } from 'lucide-react'
-import { Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud, Phone } from 'lucide-react'
+import { Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud, Phone, Bot } from 'lucide-react'
 import { focusAreas } from '../content/focus'
 import { Reveal } from './Reveal'
 
-const icons: LucideIcon[] = [Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud, Phone]
+const icons: LucideIcon[] = [Server, Globe2, ShieldCheck, Gauge, PackageCheck, GitBranch, Cloud, Phone, Bot]
 
 export function Focus() {
   return (
@@ -14,7 +15,13 @@ export function Focus() {
           <Reveal
             key={f.title}
             delay={Math.min(i, 8) * 60}
-            className="group relative border border-line bg-surface/40 rounded-sm p-5 transition duration-200 hover:border-accent/50 hover:bg-surface/70 hover:-translate-y-0.5"
+            className={clsx(
+              'group relative border border-line bg-surface/40 rounded-sm p-5 transition duration-200 hover:border-accent/50 hover:bg-surface/70 hover:-translate-y-0.5',
+              // An odd card count leaves the last one alone in the 2-col
+              // grid; span it. Guarded on parity so a future 10th card
+              // doesn't wrongly stretch across its whole row.
+              focusAreas.length % 2 === 1 && i === focusAreas.length - 1 && 'sm:col-span-2',
+            )}
           >
             <div className="flex items-start justify-between gap-3 mb-3">
               <Icon size={18} className="text-muted group-hover:text-accent transition-colors duration-200" aria-hidden="true" />
